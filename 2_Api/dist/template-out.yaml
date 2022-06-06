@@ -1,0 +1,80 @@
+Transform: AWS::Serverless-2016-10-31
+Description: kiwi-notes app serverless http API
+Resources:
+  ApiGatewayHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Auth: null
+      CorsConfiguration:
+        AllowOrigins:
+        - '*'
+        AllowHeaders:
+        - '*'
+        AllowMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        MaxAge: 60
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 10
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+  AllowLambdaDynamoDB:
+    Type: AWS::IAM::Policy
+    DependsOn:
+    - LambdaExecutionRole
+    Properties:
+      PolicyName: AllowLambdaDynamoDB
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - dynamodb:*
+          Resource:
+          - '*'
+      Roles:
+      - Ref: LambdaExecutionRole
+  API:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://kiwi-notes-s3-bucket-api-lambda/804e03046be6d7e5d1981098c6fc1905
+      Handler: index.handler
+      MemorySize: 256
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: nodejs14.x
+      Timeout: 20
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              Ref: ApiGatewayHttpApi
+            Path: $default
+            PayloadFormatVersion: '1.0'
+            Method: ANY

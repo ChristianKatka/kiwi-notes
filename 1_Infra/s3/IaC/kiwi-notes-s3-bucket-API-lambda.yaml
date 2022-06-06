@@ -1,0 +1,27 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: s3 bucket for API LAMBDA codes
+
+Resources:
+  SlackLunchBotS3BucketAPILamba:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: kiwi-notes-s3-bucket-api-lambda
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls : true
+        BlockPublicPolicy : true
+        IgnorePublicAcls : true
+        RestrictPublicBuckets : true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+              - HEAD
+              - POST
+              - PUT
+              - DELETE
+            AllowedOrigins:
+              - "*"
