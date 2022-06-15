@@ -2,24 +2,21 @@
   <section class="juusto">
     <h1 class="text-3xl font-bold underline">Hello world!</h1>
     <main>
-      <!-- TOP BAR -->
       <section class="flex justify-between m-52">
         <span class="text-3xl font-bold underline">icon</span>
         <span>Kiwi-Notes</span>
         <span>icon</span>
       </section>
     </main>
-    <font-awesome-icon icon="fa-regular fa-angry"></font-awesome-icon>
+    <font-awesome-icon :icon="['fas', 'phone']" />
   </section>
 </template>
-
-<script>
+<script lang="ts">
 export default {
-  name: 'HomeContainer',
+  name: "HomeContainer",
 };
 </script>
-
-<style lang="scss">
+<style>
 .juusto {
   height: 100%;
   background-color: rgb(197, 197, 255);
